@@ -414,7 +414,12 @@
       display: block;
       object-fit: cover;
     }
-
+    
+    .work-image img.is-portrait {
+      object-fit: contain;
+      background: var(--surface);
+    }
+    
     .work-card.large .work-image {
       aspect-ratio: 16/10;
     }
@@ -4485,6 +4490,26 @@ revealItems.forEach(item => {
 
 });
 
+/* =========================
+   AUTO-DETECT IMAGE ORIENTATION
+========================= */
+
+document.querySelectorAll(".work-image img").forEach(img => {
+
+  function checkOrientation() {
+    if (img.naturalWidth < img.naturalHeight) {
+      img.classList.add("is-portrait");
+    }
+  }
+
+  if (img.complete) {
+    checkOrientation();
+  } else {
+    img.addEventListener("load", checkOrientation);
+  }
+
+});
+  
 </script>
 
 </body>

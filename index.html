@@ -420,6 +420,25 @@
       background: var(--surface);
     }
     
+    .work-image {
+      position: relative;
+    }
+    
+    .work-image .blur-backdrop {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: blur(20px) brightness(.85);
+      transform: scale(1.15);
+      z-index: 0;
+    }
+
+    .work-image img {
+      position: relative;
+      z-index: 1;
+    }
+    
     .work-card.large .work-image {
       aspect-ratio: 16/10;
     }
@@ -4499,6 +4518,11 @@ document.querySelectorAll(".work-image img").forEach(img => {
   function checkOrientation() {
     if (img.naturalWidth < img.naturalHeight) {
       img.classList.add("is-portrait");
+
+      const backdrop = document.createElement("div");
+      backdrop.className = "blur-backdrop";
+      backdrop.style.backgroundImage = `url("${img.src}")`;
+      img.parentElement.insertBefore(backdrop, img);
     }
   }
 

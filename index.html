@@ -353,6 +353,11 @@
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 35px;
+      position: sticky;
+      top: 72px;
+      background: var(--bg);
+      padding: 12px 0;
+      z-index: 50;
     }
 
     .filter-btn {
@@ -424,6 +429,37 @@
       z-index: 1;
     }
     
+    .work-image img {
+      cursor: zoom-in;
+      -webkit-user-drag: none;
+      user-select: none;
+    }
+    
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      cursor: zoom-out;
+      padding: 30px;
+    }
+    
+    .lightbox-overlay.show {
+      display: flex;
+    }
+    
+    .lightbox-overlay img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 8px;
+      -webkit-user-drag: none;
+    }
+
+    
     .work-image.portrait {
       aspect-ratio: 3/4;
     }
@@ -431,7 +467,7 @@
     .work-card.large .work-image {
       aspect-ratio: 16/10;
     }
-
+    
     .work-card:hover .work-image {
       transform: translateY(-4px);
     }
@@ -1303,7 +1339,30 @@
         flex-direction: column;
       }
     }
-
+    
+    .back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--text);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 90;
+      transition: opacity .3s ease;
+    }
+    
+    .back-to-top.show {
+      display: flex;
+    }
+    
     /* =========================
        REDUCED MOTION
     ========================= */
@@ -4349,8 +4408,13 @@
 </section>
 
 </main>
-
-
+  
+  <button class="back-to-top" id="backToTop">↑</button>
+  
+  <div class="lightbox-overlay" id="lightboxOverlay">
+    <img id="lightboxImg" src="" alt="">
+  </div>
+  
 <script>
 
 /* =========================
@@ -4436,8 +4500,40 @@ filterButtons.forEach(button => {
   });
 
 });
+  
+  /* =========================
+  IMAGE PROTECTION + LIGHTBOX
+  ========================= */
+  
+  document.addEventListener("contextmenu", e => {
+    if (e.target.tagName === "IMG") e.preventDefault();
+  });
+  
+  document.addEventListener("keydown", e => {
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.shiftKey && ["I","J","C"].includes(e.key)) ||
+      (e.ctrlKey && e.key === "u")
+    ) {
+      e.preventDefault();
+    }
+  });
+  
+  const lightboxOverlay = document.getElementById("lightboxOverlay");
+  const lightboxImg = document.getElementById("lightboxImg");
+  
+  document.querySelectorAll(".work-image img").forEach(img => {
+    img.addEventListener("click", () => {
+      lightboxImg.src = img.src;
+      lightboxOverlay.classList.add("show");
+    });
+  });
+  
+  lightboxOverlay.addEventListener("click", () => {
+    lightboxOverlay.classList.remove("show");
+  });
 
-
+  
 /* =========================
    BEFORE / AFTER SLIDER
 ========================= */
@@ -4608,6 +4704,20 @@ document.querySelectorAll(".work-image img").forEach(img => {
     img.addEventListener("load", checkOrientation);
   }
 
+});
+
+  const backToTop = document.getElementById("backToTop");
+
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 500) {
+    backToTop.classList.add("show");
+  } else {
+    backToTop.classList.remove("show");
+  }
+});
+
+backToTop.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
 });
   
 </script>

@@ -647,6 +647,10 @@
       touch-action: none;
     }
 
+    .comparison + .comparison {
+      margin-top: 18px;
+    }
+
     .comparison.portrait {
       aspect-ratio: 3/4;
     }
@@ -2320,58 +2324,41 @@
       </div>
 
       
-      <div class="comparison" id="comparison">
-        
+      <div class="comparison" id="comparison1">
         <div class="comparison-after">
           <img src="assets/BI%201%20final.jpg" alt="Final background">
         </div>
-        
-        <div class="comparison-before" id="comparisonBefore">
+        <div class="comparison-before" id="comparisonBefore1">
           <img src="assets/BI%201%20before.jpg" alt="Original product">
         </div>
+        <span class="comparison-label before">SOURCE</span>
+        <span class="comparison-label after">FINAL</span>
+        <div class="comparison-handle" id="comparisonHandle1"></div>
+      </div>
 
-          <span class="comparison-label before">SOURCE</span>
-          <span class="comparison-label after">FINAL</span>
-
-          <div class="comparison-handle" id="comparisonHandle"></div>
-
-        </div>
-
-
-      <div class="comparison" id="comparison">
-        
+      <div class="comparison" id="comparison2">
         <div class="comparison-after">
           <img src="assets/BI%202%20final.jpg" alt="Final background">
         </div>
-        
-        <div class="comparison-before" id="comparisonBefore">
+        <div class="comparison-before" id="comparisonBefore2">
           <img src="assets/BI%202%20before.jpg" alt="Original product">
         </div>
+        <span class="comparison-label before">SOURCE</span>
+        <span class="comparison-label after">FINAL</span>
+        <div class="comparison-handle" id="comparisonHandle2"></div>
+      </div>
 
-          <span class="comparison-label before">SOURCE</span>
-          <span class="comparison-label after">FINAL</span>
-
-          <div class="comparison-handle" id="comparisonHandle"></div>
-
-        </div>
-
-      
-      <div class="comparison" id="comparison">
-        
+      <div class="comparison" id="comparison3">
         <div class="comparison-after">
           <img src="assets/BI%203%20final.jpg" alt="Final background">
         </div>
-        
-        <div class="comparison-before" id="comparisonBefore">
+        <div class="comparison-before" id="comparisonBefore3">
           <img src="assets/BI%203%20before.jpg" alt="Original product">
         </div>
-
-          <span class="comparison-label before">SOURCE</span>
-          <span class="comparison-label after">FINAL</span>
-
-          <div class="comparison-handle" id="comparisonHandle"></div>
-
-        </div>
+        <span class="comparison-label before">SOURCE</span>
+        <span class="comparison-label after">FINAL</span>
+        <div class="comparison-handle" id="comparisonHandle3"></div>
+      </div>
 
       
       <div class="case-process">
@@ -4619,84 +4606,37 @@ filterButtons.forEach(button => {
 
   
 /* =========================
-   BEFORE / AFTER SLIDER
+   BEFORE / AFTER SLIDER (multi)
 ========================= */
 
-const comparison =
-  document.getElementById("comparison");
+document.querySelectorAll(".comparison").forEach(comparison => {
 
-const comparisonBefore =
-  document.getElementById("comparisonBefore");
+  const before = comparison.querySelector(".comparison-before");
+  const handle = comparison.querySelector(".comparison-handle");
+  let dragging = false;
 
-const comparisonHandle =
-  document.getElementById("comparisonHandle");
+  function updateComparison(clientX) {
+    const rect = comparison.getBoundingClientRect();
+    let position = ((clientX - rect.left) / rect.width) * 100;
+    position = Math.max(0, Math.min(100, position));
+    before.style.clipPath = `inset(0 ${100 - position}% 0 0)`;
+    handle.style.left = position + "%";
+  }
 
-
-function updateComparison(clientX) {
-  const rect = comparison.getBoundingClientRect();
-  let position = ((clientX - rect.left) / rect.width) * 100;
-  position = Math.max(0, Math.min(100, position));
-
-  comparisonBefore.style.clipPath = `inset(0 ${100 - position}% 0 0)`;
-  comparisonHandle.style.left = position + "%";
-}
-
-
-let dragging = false;
-
-
-comparison.addEventListener(
-  "pointerdown",
-  event => {
-
+  comparison.addEventListener("pointerdown", e => {
     dragging = true;
+    comparison.setPointerCapture(e.pointerId);
+    updateComparison(e.clientX);
+  });
 
-    comparison.setPointerCapture(
-      event.pointerId
-    );
+  comparison.addEventListener("pointermove", e => {
+    if (dragging) updateComparison(e.clientX);
+  });
 
-    updateComparison(
-      event.clientX
-    );
+  comparison.addEventListener("pointerup", () => dragging = false);
+  comparison.addEventListener("pointercancel", () => dragging = false);
 
-  }
-);
-
-
-comparison.addEventListener(
-  "pointermove",
-  event => {
-
-    if (dragging) {
-
-      updateComparison(
-        event.clientX
-      );
-
-    }
-
-  }
-);
-
-
-comparison.addEventListener(
-  "pointerup",
-  () => {
-
-    dragging = false;
-
-  }
-);
-
-
-comparison.addEventListener(
-  "pointercancel",
-  () => {
-
-    dragging = false;
-
-  }
-);
+});
 
 
 /* =========================

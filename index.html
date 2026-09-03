@@ -647,26 +647,35 @@
       touch-action: none;
     }
 
+    .comparison.portrait {
+      aspect-ratio: 3/4;
+    }
+
     .comparison-before,
     .comparison-after {
       position: absolute;
       inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .comparison-before img,
+    .comparison-after img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
     }
 
     .comparison-before {
-      width: 50%;
-      overflow: hidden;
+      clip-path: inset(0 50% 0 0);
       z-index: 2;
     }
-
-    .comparison-before .image-placeholder {
-      width: 200%;
-    }
-
+    
     .comparison-after {
       z-index: 1;
     }
-
+    
     .comparison-handle {
       position: absolute;
       top: 0;
@@ -2310,44 +2319,24 @@
 
       </div>
 
-
+      
       <div class="comparison" id="comparison">
-
+        
         <div class="comparison-after">
-
-          <div class="image-placeholder">
-            <img src="assets/BI%201%20final.jpg" alt="Source product photo" loading="lazy">
-          </div>
-
+          <img src="assets/BI%201%20final.jpg" alt="Final background">
         </div>
-
-
+        
         <div class="comparison-before" id="comparisonBefore">
-
-          <div class="image-placeholder">
-            <img src="assets/BI%201%20before.jpg" alt="Source product photo" loading="lazy">
-          </div>
-
+          <img src="assets/BI%201%20before.jpg" alt="Original product">
         </div>
 
+          <span class="comparison-label before">SOURCE</span>
+          <span class="comparison-label after">FINAL</span>
 
-        <span class="comparison-label before">
-          SOURCE
-        </span>
+          <div class="comparison-handle" id="comparisonHandle"></div>
 
-        <span class="comparison-label after">
-          FINAL
-        </span>
-
-
-        <div
-          class="comparison-handle"
-          id="comparisonHandle"
-        ></div>
-
-      </div>
-
-
+        </div>
+      
       <div class="case-process">
 
         <div class="process-step">
@@ -4607,26 +4596,12 @@ const comparisonHandle =
 
 
 function updateComparison(clientX) {
+  const rect = comparison.getBoundingClientRect();
+  let position = ((clientX - rect.left) / rect.width) * 100;
+  position = Math.max(0, Math.min(100, position));
 
-  const rect =
-    comparison.getBoundingClientRect();
-
-  let position =
-    ((clientX - rect.left) / rect.width) * 100;
-
-  position =
-    Math.max(
-      0,
-      Math.min(100, position)
-    );
-
-
-  comparisonBefore.style.width =
-    position + "%";
-
-  comparisonHandle.style.left =
-    position + "%";
-
+  comparisonBefore.style.clipPath = `inset(0 ${100 - position}% 0 0)`;
+  comparisonHandle.style.left = position + "%";
 }
 
 

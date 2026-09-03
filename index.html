@@ -564,6 +564,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 18px;
+      margin-top: 18px;
     }
 
     .case-image {
@@ -578,6 +579,10 @@
       height: 100%;
       display: block;
       object-fit: cover;
+    }
+
+    .case-image.portrait {
+      aspect-ratio: 3/4;
     }
 
     .case-process {
@@ -2190,11 +2195,11 @@
 
       <div class="case-gallery">
         
-        <div class="case-image">
+        <div class="case-image portrait">
           <img src="assets/PP%202%20before.jpg" alt="Source product photo" loading="lazy">
         </div>
         
-        <div class="case-image">
+        <div class="case-image portrait">
           <img src="assets/PP%202%20final.jpg" alt="Final product photograph" loading="lazy">
         </div>
         

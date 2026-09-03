@@ -573,6 +573,13 @@
       background: var(--surface);
     }
 
+    .case-image img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
     .case-process {
       display: grid;
       grid-template-columns: repeat(4,1fr);
@@ -2167,22 +2174,18 @@
         </div>
 
       </div>
-
-
+      
+      
       <div class="case-gallery">
-
+        
         <div class="case-image">
-          <div class="image-placeholder">
-            SOURCE PRODUCT
-          </div>
+          <img src="assets/PP%201%20Before.jpg" alt="Source product photo" loading="lazy">
         </div>
-
+        
         <div class="case-image">
-          <div class="image-placeholder">
-            FINAL PRODUCT PHOTOGRAPH
-          </div>
+          <img src="assets/PP%201%20final.jpg" alt="Final product photograph" loading="lazy">
         </div>
-
+        
       </div>
 
     </article>

@@ -3569,6 +3569,11 @@
 
   </div>
 
+  <div class="testimonial-nav">
+    <button id="testimonialPrev">←</button>
+    <button id="testimonialNext">→</button>
+  </div>
+  
 </section>
 
 
@@ -4004,6 +4009,48 @@ window.addEventListener("scroll", () => {
 backToTop.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+/* =========================
+   TESTIMONIAL DRAG SCROLL
+========================= */
+
+const testimonialWindow = document.querySelector(".testimonial-window");
+let isDown = false;
+let startX;
+let scrollLeft;
+
+testimonialWindow.addEventListener("pointerdown", e => {
+  isDown = true;
+  testimonialWindow.classList.add("dragging");
+  startX = e.pageX;
+  scrollLeft = testimonialWindow.scrollLeft;
+  testimonialWindow.setPointerCapture(e.pointerId);
+});
+
+testimonialWindow.addEventListener("pointermove", e => {
+  if (!isDown) return;
+  const x = e.pageX;
+  const walk = x - startX;
+  testimonialWindow.scrollLeft = scrollLeft - walk;
+});
+
+testimonialWindow.addEventListener("pointerup", () => {
+  isDown = false;
+  testimonialWindow.classList.remove("dragging");
+});
+
+testimonialWindow.addEventListener("pointercancel", () => {
+  isDown = false;
+  testimonialWindow.classList.remove("dragging");
+});
+
+  document.getElementById("testimonialPrev").addEventListener("click", () => {
+    testimonialWindow.scrollBy({ left: -480, behavior: "smooth" });
+  });
+  
+  document.getElementById("testimonialNext").addEventListener("click", () => {
+    testimonialWindow.scrollBy({ left: 480, behavior: "smooth" });
+  });
   
 </script>
 

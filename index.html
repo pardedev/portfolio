@@ -922,7 +922,6 @@
       overflow-y: hidden;
       position: relative;
       cursor: grab;
-      scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
@@ -2480,32 +2479,24 @@
       </div>
 
 
-      <div class="case-gallery">
+      <div class="case-gallery" style="grid-template-columns: repeat(4,1fr);">
 
         <div class="case-image">
-          <div class="image-placeholder">
-            ORIGINAL
-          </div>
+          <img src="assets/SE%201%20Step%201.jpg" alt="Sequential editing step 1" loading="lazy">
         </div>
-
+        
         <div class="case-image">
-          <div class="image-placeholder">
-            STEP 01
-          </div>
+          <img src="assets/SE%201%20Step%202.jpg" alt="Sequential editing step 2" loading="lazy">
         </div>
-
+        
         <div class="case-image">
-          <div class="image-placeholder">
-            STEP 02
-          </div>
+          <img src="assets/SE%201%20Step%203.jpg" alt="Sequential editing step 3" loading="lazy">
         </div>
-
+        
         <div class="case-image">
-          <div class="image-placeholder">
-            FINAL STEP
-          </div>
+          <img src="assets/SE%201%20Step%204.jpg" alt="Sequential editing step 4" loading="lazy">
         </div>
-
+        
       </div>
 
 
@@ -4014,45 +4005,67 @@ backToTop.addEventListener("click", () => {
    TESTIMONIAL DRAG SCROLL
 ========================= */
 
-const testimonialWindow = document.querySelector(".testimonial-window");
-let isDown = false;
-let startX;
-let scrollLeft;
-
-testimonialWindow.addEventListener("pointerdown", e => {
-  isDown = true;
-  testimonialWindow.classList.add("dragging");
-  startX = e.pageX;
-  scrollLeft = testimonialWindow.scrollLeft;
-  testimonialWindow.setPointerCapture(e.pointerId);
-});
-
-testimonialWindow.addEventListener("pointermove", e => {
-  if (!isDown) return;
-  const x = e.pageX;
-  const walk = x - startX;
-  testimonialWindow.scrollLeft = scrollLeft - walk;
-});
-
-testimonialWindow.addEventListener("pointerup", () => {
-  isDown = false;
-  testimonialWindow.classList.remove("dragging");
-});
-
-testimonialWindow.addEventListener("pointercancel", () => {
-  isDown = false;
-  testimonialWindow.classList.remove("dragging");
-});
-
+  const testimonialWindow = document.querySelector(".testimonial-window");
+  const testimonialTrack = document.querySelector(".testimonial-track");
+  
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+  let autoScroll = true;
+  const scrollSpeed = 0.6;
+  
+  testimonialWindow.addEventListener("pointerdown", e => {
+    isDown = true;
+    autoScroll = false;
+    testimonialWindow.classList.add("dragging");
+    startX = e.pageX;
+    scrollLeft = testimonialWindow.scrollLeft;
+    testimonialWindow.setPointerCapture(e.pointerId);
+  });
+  
+  testimonialWindow.addEventListener("pointermove", e => {
+    if (!isDown) return;
+    const x = e.pageX;
+    const walk = x - startX;
+    testimonialWindow.scrollLeft = scrollLeft - walk;
+  });
+  
+  testimonialWindow.addEventListener("pointerup", () => {
+    isDown = false;
+    autoScroll = true;
+    testimonialWindow.classList.remove("dragging");
+  });
+  
+  testimonialWindow.addEventListener("pointercancel", () => {
+    isDown = false;
+    autoScroll = true;
+    testimonialWindow.classList.remove("dragging");
+  });
+  
   document.getElementById("testimonialPrev").addEventListener("click", () => {
+    autoScroll = false;
     testimonialWindow.scrollBy({ left: -480, behavior: "smooth" });
+    setTimeout(() => autoScroll = true, 600);
   });
   
   document.getElementById("testimonialNext").addEventListener("click", () => {
+    autoScroll = false;
     testimonialWindow.scrollBy({ left: 480, behavior: "smooth" });
+    setTimeout(() => autoScroll = true, 600);
   });
   
+  function autoScrollTestimonials() {
+    if (autoScroll) {
+      testimonialWindow.scrollLeft += scrollSpeed;
+      if (testimonialWindow.scrollLeft >= testimonialTrack.scrollWidth / 2) {
+        testimonialWindow.scrollLeft = 0;
+      }
+    }
+    requestAnimationFrame(autoScrollTestimonials);
+  }
+  requestAnimationFrame(autoScrollTestimonials);
+  
 </script>
-
+  
 </body>
 </html>

@@ -488,6 +488,40 @@
       -webkit-user-drag: none;
     }
 
+    .lightbox-nav-btn {
+      display: none;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,.15);
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      z-index: 210;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .lightbox-overlay.sequential-mode .lightbox-nav-btn {
+      display: flex;
+    }
+    
+    .lightbox-nav-btn:hover {
+      background: rgba(255,255,255,.3);
+    }
+    
+    .lightbox-nav-btn.prev {
+      left: 20px;
+    }
+    
+    .lightbox-nav-btn.next {
+      right: 20px;
+    }
+
     
     .work-image.portrait {
       aspect-ratio: 3/4;
@@ -615,7 +649,7 @@
     }
 
     .case-image.wide {
-      aspect-ratio: 3/2;
+      aspect-ratio: 2/3;
     }
 
     .case-process {
@@ -4068,7 +4102,9 @@
   <button class="back-to-top" id="backToTop">↑</button>
   
   <div class="lightbox-overlay" id="lightboxOverlay">
+    <button class="lightbox-nav-btn prev" id="lightboxPrev">‹</button>
     <img id="lightboxImg" src="" alt="">
+    <button class="lightbox-nav-btn next" id="lightboxNext">›</button>
   </div>
   
 <script>
@@ -4154,13 +4190,13 @@ filterButtons.forEach(button => {
     });
 
   });
-
+  
 });
   
-  /* =========================
-  IMAGE PROTECTION + LIGHTBOX
-  ========================= */
-  
+/* =========================
+IMAGE PROTECTION + LIGHTBOX
+========================= */
+
   document.addEventListener("contextmenu", e => {
     e.preventDefault();
   });
@@ -4177,23 +4213,84 @@ filterButtons.forEach(button => {
   
   const lightboxOverlay = document.getElementById("lightboxOverlay");
   const lightboxImg = document.getElementById("lightboxImg");
+  const lightboxPrev = document.getElementById("lightboxPrev");
+  const lightboxNext = document.getElementById("lightboxNext");
+  
+  let lightboxImages = [];
+  let lightboxIndex = 0;
+  
+  function openLightbox(images, index) {
+    lightboxImages = images;
+    lightboxIndex = index;
+    lightboxImg.src = lightboxImages[lightboxIndex];
+    lightboxOverlay.classList.toggle("sequential-mode", images.length > 1);
+    lightboxOverlay.classList.add("show");
+  }
+  
+  function lightboxShowNext() {
+    lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
+    lightboxImg.src = lightboxImages[lightboxIndex];
+  }
+  
+  function lightboxShowPrev() {
+    lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
+    lightboxImg.src = lightboxImages[lightboxIndex];
+  }
   
   document.querySelectorAll(".work-image img").forEach(img => {
-    img.addEventListener("click", () => {
-      lightboxImg.src = img.src;
-      lightboxOverlay.classList.add("show");
-    });
+    img.addEventListener("click", () => openLightbox([img.src], 0));
   });
   
-  lightboxOverlay.addEventListener("click", () => {
-    lightboxOverlay.classList.remove("show");
+  const sequentialImgs = document.querySelectorAll(".case-image.wide img");
+  const sequentialSrcs = Array.from(sequentialImgs).map(img => img.src);
+  
+  sequentialImgs.forEach((img, index) => {
+    img.style.cursor = "zoom-in";
+    img.style.userSelect = "none";
+    img.setAttribute("draggable", "false");
+    img.addEventListener("click", () => openLightbox(sequentialSrcs, index));
   });
-
-  document.querySelectorAll(".case-image.wide img").forEach(img => {
-    img.addEventListener("click", () => {
-      lightboxImg.src = img.src;
-      lightboxOverlay.classList.add("show");
-    });
+  
+  lightboxNext.addEventListener("click", e => {
+    e.stopPropagation();
+    lightboxShowNext();
+  });
+  
+  lightboxPrev.addEventListener("click", e => {
+    e.stopPropagation();
+    lightboxShowPrev();
+  });
+  
+  lightboxOverlay.addEventListener("click", e => {
+    if (e.target === lightboxOverlay) {
+      lightboxOverlay.classList.remove("show");
+    }
+  });
+  
+  let lbDragStartX = null;
+  
+  lightboxImg.addEventListener("pointerdown", e => {
+    lbDragStartX = e.clientX;
+  });
+  
+  lightboxImg.addEventListener("pointerup", e => {
+    if (lbDragStartX === null || lightboxImages.length <= 1) return;
+    const diff = e.clientX - lbDragStartX;
+    if (Math.abs(diff) > 50) {
+      if (diff < 0) {
+        lightboxShowNext();
+      } else {
+        lightboxShowPrev();
+      }
+    }
+    lbDragStartX = null;
+  });
+  
+  document.addEventListener("keydown", e => {
+    if (!lightboxOverlay.classList.contains("show")) return;
+    if (e.key === "ArrowRight") lightboxShowNext();
+    if (e.key === "ArrowLeft") lightboxShowPrev();
+    if (e.key === "Escape") lightboxOverlay.classList.remove("show");
   });
   
   /* =========================
